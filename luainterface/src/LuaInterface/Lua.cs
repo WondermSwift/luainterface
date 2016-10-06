@@ -987,22 +987,26 @@ namespace LuaInterface
 		 * Registers an object's method as a Lua function (global or table field)
 		 * The method may have any signature
 		 */
-        public LuaFunction RegisterFunction(string path, object target, MethodBase function /*MethodInfo function*/)  //CP: Fix for struct constructor by Alexander Kappner (link: http://luaforge.net/forum/forum.php?thread_id=2859&forum_id=145)
-		{
+        public LuaFunction RegisterFunction(string path, MethodBase function)
+        {
+            return RegisterFunction(path, null, function);
+        }
+
+        public LuaFunction RegisterFunction(string path, object target, MethodBase function)  //CP: Fix for struct constructor by Alexander Kappner (link: http://luaforge.net/forum/forum.php?thread_id=2859&forum_id=145)
+        {
             // We leave nothing on the stack when we are done
             int oldTop = LuaDLL.lua_gettop(luaState);
-            
-			LuaMethodWrapper wrapper=new LuaMethodWrapper(translator,target,function.DeclaringType,function);
-			translator.push(luaState,new LuaCSFunction(wrapper.call));
 
-			this[path]=translator.getObject(luaState,-1);
-            LuaFunction f = GetFunction(path);
+            var wrapper = new LuaMethodWrapper(translator, target, function.DeclaringType, function);
+            translator.push(luaState, new LuaCSFunction(wrapper.call));
+
+            this[path] = translator.getObject(luaState, -1);
+            var f = GetFunction(path);
 
             LuaDLL.lua_settop(luaState, oldTop);
 
             return f;
-		}
-
+        }
 
 		/*
 		 * Compares the two values referenced by ref1 and ref2 for equality
