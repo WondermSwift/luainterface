@@ -29,10 +29,9 @@ namespace LuaInterface
             if (!_Disposed)
             {
                 if (disposeManagedResources)
-                {
                     if (_Reference != 0)
                         _Interpreter.dispose(_Reference);
-                }
+
                 _Interpreter = null;
                 _Disposed = true;
             }
@@ -42,10 +41,11 @@ namespace LuaInterface
         {
             if (o is LuaBase)
             {
-                LuaBase l = (LuaBase)o;
+                var l = (LuaBase)o;
                 return _Interpreter.compareRef(l._Reference, _Reference);
             }
-            else return false;
+            else 
+                return false;
         }
 
         public override int GetHashCode()

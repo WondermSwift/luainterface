@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{2EC66587-F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaInterface.net35", "src\LuaInterface.net35\LuaInterface.net35.csproj", "{817FF371-DB5F-4382-8E68-F1E569D20A81}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua51", "..\lua-5.1.4\src\lua514.vcxproj", "{0A82CC4C-9A27-461C-8DB0-A65AC6393748}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua51", "..\lua-5.1.5\src\lua514.vcxproj", "{0A82CC4C-9A27-461C-8DB0-A65AC6393748}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

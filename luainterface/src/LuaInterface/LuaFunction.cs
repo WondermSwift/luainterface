@@ -25,39 +25,6 @@ namespace LuaInterface
             _Interpreter = interpreter;
         }
 
-        //~LuaFunction()
-        //{
-        //    if (reference != 0)
-        //        interpreter.dispose(reference);
-        //}
-
-        //bool disposed = false;
-        //~LuaFunction()
-        //{
-        //    Dispose(false);
-        //}
-
-        //public void Dispose()
-        //{
-        //    Dispose(true);
-        //    GC.SuppressFinalize(this);
-        //}
-
-        //public virtual void Dispose(bool disposeManagedResources)
-        //{
-        //    if (!this.disposed)
-        //    {
-        //        if (disposeManagedResources)
-        //        {
-        //            if (_Reference != 0) 
-        //                _Interpreter.dispose(_Reference);
-        //        }
-
-        //        disposed = true;
-        //    }
-        //}
-
-
         /*
          * Calls the function casting return values to the types
          * in returnTypes

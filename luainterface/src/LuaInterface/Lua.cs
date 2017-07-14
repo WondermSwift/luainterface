@@ -377,9 +377,10 @@ namespace LuaInterface
 			}
 			set 
 			{
-				int oldTop=LuaDLL.lua_gettop(luaState);
-				string[] path=fullPath.Split(new char[] { '.' });
-				if(path.Length==1) 
+				int oldTop = LuaDLL.lua_gettop(luaState);
+				string[] path = fullPath.Split(new char[] { '.' });
+
+				if(path.Length == 1) 
 				{
 					translator.push(luaState,value);
 					LuaDLL.lua_setglobal(luaState,fullPath);
@@ -391,20 +392,17 @@ namespace LuaInterface
 					Array.Copy(path,1,remainingPath,0,path.Length-1);
 					setObject(remainingPath,value);
 				}
+
 				LuaDLL.lua_settop(luaState,oldTop);
 
                 // Globals auto-complete
                 if (value == null)
-                {
                     // Remove now obsolete entries
                     globals.Remove(fullPath);
-                }
                 else
-                {
                     // Add new entries
                     if (!globals.Contains(fullPath))
                         registerGlobal(fullPath, value.GetType(), 0);
-                }
             }
 		}
 
@@ -517,12 +515,13 @@ namespace LuaInterface
 		internal object getObject(string[] remainingPath) 
 		{
 			object returnValue=null;
-			for(int i=0;i<remainingPath.Length;i++) 
+			for(var i = 0; i < remainingPath.Length; i++) 
 			{
 				LuaDLL.lua_pushstring(luaState,remainingPath[i]);
 				LuaDLL.lua_gettable(luaState,-2);
-				returnValue=translator.getObject(luaState,-1);
-				if(returnValue==null) break;	
+				returnValue = translator.getObject(luaState,-1);
+
+				if(returnValue == null) break;	
 			}
 			return returnValue;    
 		}
@@ -579,8 +578,6 @@ namespace LuaInterface
 		{
             return callFunction(function, args, null);
 		}
-
-
 		/*
 		 * Calls the object as a function with the provided arguments and
 		 * casting returned values to the types in returnTypes before returning
@@ -588,20 +585,24 @@ namespace LuaInterface
 		 */
 		internal object[] callFunction(object function,object[] args,Type[] returnTypes) 
 		{
-			int nArgs=0;
+			var nArgs = 0;
 			int oldTop=LuaDLL.lua_gettop(luaState);
+
 			if(!LuaDLL.lua_checkstack(luaState,args.Length+6))
                 throw new LuaException("Lua stack overflow");
+
 			translator.push(luaState,function);
+
 			if(args!=null) 
 			{
 				nArgs=args.Length;
-				for(int i=0;i<args.Length;i++) 
-				{
-					translator.push(luaState,args[i]);
-				}
+
+				for(var i = 0; i < args.Length; i++)
+				    translator.push(luaState,args[i]);
             }
+
             executing = true;
+
             try
             {
                 int error = LuaDLL.lua_pcall(luaState, nArgs, -1, 0);
@@ -620,7 +621,7 @@ namespace LuaInterface
 		 */
 		internal void setObject(string[] remainingPath, object val) 
 		{
-			for(int i=0; i<remainingPath.Length-1;i++) 
+			for(var i=0; i<remainingPath.Length-1;i++) 
 			{
 				LuaDLL.lua_pushstring(luaState,remainingPath[i]);
 				LuaDLL.lua_gettable(luaState,-2);
@@ -659,7 +660,7 @@ namespace LuaInterface
 
 		public ListDictionary GetTableDict(LuaTable table)
 		{
-			ListDictionary dict = new ListDictionary();
+			var dict = new ListDictionary();
 
 			int oldTop = LuaDLL.lua_gettop(luaState);
 			translator.push(luaState, table);
@@ -987,22 +988,26 @@ namespace LuaInterface
 		 * Registers an object's method as a Lua function (global or table field)
 		 * The method may have any signature
 		 */
-        public LuaFunction RegisterFunction(string path, object target, MethodBase function /*MethodInfo function*/)  //CP: Fix for struct constructor by Alexander Kappner (link: http://luaforge.net/forum/forum.php?thread_id=2859&forum_id=145)
-		{
+        public LuaFunction RegisterFunction(string path, MethodBase function)
+        {
+            return RegisterFunction(path, null, function);
+        }
+
+        public LuaFunction RegisterFunction(string path, object target, MethodBase function)  //CP: Fix for struct constructor by Alexander Kappner (link: http://luaforge.net/forum/forum.php?thread_id=2859&forum_id=145)
+        {
             // We leave nothing on the stack when we are done
             int oldTop = LuaDLL.lua_gettop(luaState);
-            
-			LuaMethodWrapper wrapper=new LuaMethodWrapper(translator,target,function.DeclaringType,function);
-			translator.push(luaState,new LuaCSFunction(wrapper.call));
 
-			this[path]=translator.getObject(luaState,-1);
-            LuaFunction f = GetFunction(path);
+            var wrapper = new LuaMethodWrapper(translator, target, function.DeclaringType, function);
+            translator.push(luaState, new LuaCSFunction(wrapper.call));
+
+            this[path] = translator.getObject(luaState, -1);
+            var f = GetFunction(path);
 
             LuaDLL.lua_settop(luaState, oldTop);
 
             return f;
-		}
-
+        }
 
 		/*
 		 * Compares the two values referenced by ref1 and ref2 for equality
